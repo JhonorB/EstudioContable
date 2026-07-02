@@ -8,6 +8,13 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# Variables de entorno predeterminadas para Render (así no tienes que ponerlas a mano)
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV APP_URL=https://estudiocontable-jmp0.onrender.com
+ENV DB_CONNECTION=sqlite
+ENV APP_KEY=base64:ckpsqaLl0GADCH7VFxHIqBmC/6l4YcBdBO72JzZrWY8=
+
 # Instalar dependencias del sistema y extensiones PHP
 RUN apt-get update && apt-get install -y \
     git \
