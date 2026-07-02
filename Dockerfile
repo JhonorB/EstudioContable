@@ -1,6 +1,14 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
-# Instalar dependencias del sistema operativo
+# Habilitar mod_rewrite de Apache para Laravel
+RUN a2enmod rewrite
+
+# Cambiar DocumentRoot al directorio public de Laravel
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Instalar dependencias del sistema y extensiones PHP
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -9,29 +17,34 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libzip-dev
+    libzip-dev \
+    sqlite3 \
+    libsqlite3-dev
 
-# Limpiar caché para aligerar la imagen
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones PHP necesarias para Laravel y base de datos
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Obtener Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configurar el directorio de trabajo
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Copiar archivos del proyecto
-COPY . /var/www
+COPY . /var/www/html
 
-# Instalar dependencias de PHP (Omitiendo dev dependencies para producción)
+# Instalar dependencias de PHP
 RUN composer install --no-dev --optimize-autoloader || true
 
-# Configurar permisos para las carpetas requeridas por Laravel
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Configurar permisos para Apache
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 9000
-CMD ["php-fpm"]
+# Copiar y dar permisos al script de inicio
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Exponer el puerto 80 (Render detecta este puerto automáticamente)
+EXPOSE 80
+
+CMD ["/usr/local/bin/start.sh"]
