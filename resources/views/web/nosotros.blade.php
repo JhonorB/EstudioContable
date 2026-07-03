@@ -88,6 +88,17 @@
                     <p class="text-muted small mb-0">Especialista en liquidación de impuestos de SUNAT, administración de planillas electrónicas (PLAME) y fiscalizaciones laborales.</p>
                 </div>
             </div>
+            <!-- Licenciada -->
+            <div class="col-md-5 col-lg-4">
+                <div class="card border-0 shadow-sm text-center h-100 bg-light p-4" style="border-radius: 12px;">
+                    <div class="mx-auto mb-3" style="width: 180px; height: 180px; overflow: hidden; border-radius: 50%; border: 4px solid var(--ponce-primary);">
+                        <img src="{{ asset('images/licenciadaCONTABILDIAD.png') }}" alt="Licenciada en Contabilidad" style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+                    </div>
+                    <h5 class="fw-bold text-ponce-dark mb-1">Licenciada en Contabilidad</h5>
+                    <p class="text-primary small fw-semibold mb-3">Especialista Contable</p>
+                    <p class="text-muted small mb-0">Profesional experta en el análisis y elaboración de estados financieros y procesos contables.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
